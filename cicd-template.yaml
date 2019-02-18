@@ -82,6 +82,9 @@ objects:
             stages {
               stage('Build App') {
                 steps {
+                  script {
+                    properties([pipelineTriggers([pollSCM('* * * * *')])])
+                  }
                   #git branch: 'eap-7', url: 'https://github.com/timspeetjens/openshift-tasks.git'
                   git branch: 'eap-7', url: 'https://github.com/timspeetjens/os-sample-java-web.git'
                   sh "${mvnCmd} install -DskipTests=true"
