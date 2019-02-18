@@ -5,8 +5,8 @@ set -e
 oc login -u developer
 
 # Create Projects
-oc new-project dev --display-name="Tasks - Dev"
-oc new-project stage --display-name="Tasks - Stage"
+oc new-project dev --display-name="SampleJava - Dev"
+oc new-project stage --display-name="SampleJava - Stage"
 oc new-project cicd --display-name="CI/CD"
 
 # Grant Jenkins Access to Projects

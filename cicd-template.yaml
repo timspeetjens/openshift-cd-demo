@@ -111,7 +111,7 @@ objects:
                   script {
                     openshift.withCluster() {
                       openshift.withProject(env.DEV_PROJECT) {
-                        openshift.selector("bc", "tasks").startBuild("--from-file=target/ROOT.war", "--wait=true")
+                        openshift.selector("bc", "samplejava").startBuild("--from-file=target/ROOT.war", "--wait=true")
                       }
                     }
                   }
@@ -122,7 +122,7 @@ objects:
                   script {
                     openshift.withCluster() {
                       openshift.withProject(env.DEV_PROJECT) {
-                        openshift.selector("dc", "tasks").rollout().latest();
+                        openshift.selector("dc", "samplejava").rollout().latest();
                       }
                     }
                   }
@@ -139,7 +139,7 @@ objects:
 
                   script {
                     openshift.withCluster() {
-                        openshift.tag("${env.DEV_PROJECT}/tasks:latest", "${env.STAGE_PROJECT}/tasks:stage")
+                        openshift.tag("${env.DEV_PROJECT}/samplejava:latest", "${env.STAGE_PROJECT}/samplejava:stage")
                     }
                   }
                 }
@@ -149,7 +149,7 @@ objects:
                   script {
                     openshift.withCluster() {
                       openshift.withProject(env.STAGE_PROJECT) {
-                        openshift.selector("dc", "tasks").rollout().latest();
+                        openshift.selector("dc", "samplejava").rollout().latest();
                       }
                     }
                   }
@@ -266,27 +266,27 @@ objects:
             #oc import-image wildfly --from=openshift/wildfly-120-centos7 --confirm -n ${DEV_PROJECT} 
             
               # dev
-              oc new-build --name=tasks --image-stream=jboss-eap71-openshift:latest --binary=true -n ${DEV_PROJECT}
-              oc new-app tasks:latest --allow-missing-images -n ${DEV_PROJECT}
-              oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:latest --manual -n ${DEV_PROJECT}
+              oc new-build --name=samplejava --image-stream=jboss-eap71-openshift:latest --binary=true -n ${DEV_PROJECT}
+              oc new-app samplejava:latest --allow-missing-images -n ${DEV_PROJECT}
+              oc set triggers dc -l app=samplejava --containers=samplejava --from-image=samplejava:latest --manual -n ${DEV_PROJECT}
               
               # stage
-              oc new-app tasks:stage --allow-missing-images -n ${STAGE_PROJECT}
-              oc set triggers dc -l app=tasks --containers=tasks --from-image=tasks:stage --manual -n ${STAGE_PROJECT}
+              oc new-app samplejava:stage --allow-missing-images -n ${STAGE_PROJECT}
+              oc set triggers dc -l app=samplejava --containers=samplejava --from-image=samplejava:stage --manual -n ${STAGE_PROJECT}
             
             # dev project
-            oc expose dc/tasks --port=8080 -n ${DEV_PROJECT}
-            oc expose svc/tasks -n ${DEV_PROJECT}
-            oc set probe dc/tasks --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
-            oc set probe dc/tasks --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
-            oc rollout cancel dc/tasks -n ${STAGE_PROJECT}
+            oc expose dc/samplejava --port=8080 -n ${DEV_PROJECT}
+            oc expose svc/samplejava -n ${DEV_PROJECT}
+            oc set probe dc/samplejava --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
+            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
+            oc rollout cancel dc/samplejava -n ${STAGE_PROJECT}
 
             # stage project
-            oc expose dc/tasks --port=8080 -n ${STAGE_PROJECT}
-            oc expose svc/tasks -n ${STAGE_PROJECT}
-            oc set probe dc/tasks --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
-            oc set probe dc/tasks --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
-            oc rollout cancel dc/tasks -n ${DEV_PROJECT}
+            oc expose dc/samplejava --port=8080 -n ${STAGE_PROJECT}
+            oc expose svc/samplejava -n ${STAGE_PROJECT}
+            oc set probe dc/samplejava --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
+            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
+            oc rollout cancel dc/samplejava -n ${DEV_PROJECT}
 
             sleep 5
 
