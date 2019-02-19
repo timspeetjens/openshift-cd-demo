@@ -82,11 +82,7 @@ objects:
             stages {
               stage('Build App') {
                 steps {
-                  script {
-                    properties([pipelineTriggers([pollSCM('* * * * *')])])
-                  }
-                  #git branch: 'eap-7', url: 'https://github.com/timspeetjens/openshift-tasks.git'
-                  git branch: 'eap-7', url: 'https://github.com/timspeetjens/os-sample-java-web.git'
+                  git branch: 'master', url: 'https://github.com/timspeetjens/os-sample-java-web.git'
                   sh "${mvnCmd} install -DskipTests=true"
                 }
               }
@@ -110,7 +106,6 @@ objects:
               }
               stage('Build Image') {
                 steps {
-                  #sh "cp target/openshift-tasks.war target/ROOT.war"
                   script {
                     openshift.withCluster() {
                       openshift.withProject(env.DEV_PROJECT) {
