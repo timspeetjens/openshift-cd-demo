@@ -256,7 +256,7 @@ objects:
 
             # setup dev env
             #oc import-image wildfly --from=openshift/wildfly-120-centos7 --confirm -n ${DEV_PROJECT} 
-            
+            # --strategy=source --image-stream=jboss-webserver31-tomcat8-openshift:1.2
               # dev
               oc new-build --name=samplejava --image-stream=jboss-eap71-openshift:latest --binary=true -n ${DEV_PROJECT}
               oc new-app samplejava:latest --allow-missing-images -n ${DEV_PROJECT}
@@ -269,18 +269,18 @@ objects:
             # dev project
             oc expose dc/samplejava --port=8080 -n ${DEV_PROJECT}
             oc expose svc/samplejava -n ${DEV_PROJECT}
-            oc set probe dc/samplejava --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
-            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
+            oc set probe dc/samplejava --readiness --get-url=http://:8080/ --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
+            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${DEV_PROJECT}
             oc rollout cancel dc/samplejava -n ${STAGE_PROJECT}
 
             # stage project
             oc expose dc/samplejava --port=8080 -n ${STAGE_PROJECT}
             oc expose svc/samplejava -n ${STAGE_PROJECT}
-            oc set probe dc/samplejava --readiness --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
-            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ws/demo/healthcheck --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
+            oc set probe dc/samplejava --readiness --get-url=http://:8080/ --initial-delay-seconds=30 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
+            oc set probe dc/samplejava --liveness  --get-url=http://:8080/ --initial-delay-seconds=180 --failure-threshold=10 --period-seconds=10 -n ${STAGE_PROJECT}
             oc rollout cancel dc/samplejava -n ${DEV_PROJECT}
 
-            sleep 5
+            sleep 30
 
               oc new-app -f https://raw.githubusercontent.com/siamaksade/sonarqube/master/sonarqube-template.yml --param=SONARQUBE_MEMORY_LIMIT=6Gi
 
